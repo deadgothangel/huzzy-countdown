@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>huzzy b — Countdown</title>
+    <!-- Подключаем официальный скрипт Telegram Web Apps -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            /* Отключаем выделение текста и системные меню при долгом тапе */
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
@@ -19,7 +19,7 @@
 
         body, html {
             width: 100%;
-            height: 100dvh; /* Динамическая высота для мобильных браузеров */
+            height: 100dvh;
             background-color: #000;
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -27,7 +27,7 @@
             position: relative;
         }
 
-        /* Видео на весь экран смартфона */
+        /* Видео на весь экран */
         .video-bg {
             position: absolute;
             top: 50%;
@@ -39,7 +39,7 @@
             z-index: 1;
         }
 
-        /* Темный оверлей для читаемости текста */
+        /* Темный оверлей */
         .overlay {
             position: absolute;
             top: 0;
@@ -50,17 +50,17 @@
             z-index: 2;
         }
 
-        /* Основной контейнер под мобилку */
+        /* Основной контейнер */
         .container {
             position: relative;
             z-index: 3;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Раскидываем контент по высоте */
+            justify-content: space-between;
             align-items: center;
             width: 100%;
             height: 100%;
-            padding: 40px 20px 60px 20px; /* Отступы с учетом безопасных зон */
+            padding: 40px 20px 60px 20px;
             text-align: center;
         }
 
@@ -68,23 +68,26 @@
             margin-top: 20px;
         }
 
-        .title {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.25em;
-            color: #999;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
+        /* ТЕПЕРЬ HUZZY B СВЕРХУ */
         .artist {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.03em;
             background: linear-gradient(180deg, #fff 0%, #aaa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        /* ТЕПЕРЬ "ДО ДРОПА ОСТАЛОСЬ" СНИЗУ */
+        .title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #999;
+            margin-top: 12px;
+            font-weight: 500;
         }
 
         /* Таймер-плашка */
@@ -100,7 +103,7 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             width: 100%;
-            max-width: 340px; /* Идеально для большинства экранов */
+            max-width: 340px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
@@ -149,7 +152,6 @@
             to { opacity: 1; text-shadow: 0 0 20px rgba(255,51,51,0.8); }
         }
 
-        /* Небольшой футер для баланса */
         .footer-zone {
             font-size: 0.75rem;
             color: #555;
@@ -168,10 +170,11 @@
 
     <div class="container">
         <div class="header-zone">
-            <div class="title">До дропа осталось</div>
             <div class="artist">huzzy b</div>
+            <div class="title">До дропа осталось</div>
         </div>
 
+        <!-- Блок таймера -->
         <div id="timer" class="countdown">
             <div class="time-block">
                 <span id="days" class="time-number">00</span>
@@ -194,6 +197,7 @@
             </div>
         </div>
 
+        <!-- Текст релиза -->
         <div id="release-text" class="drop-message">Трек в сети!</div>
 
         <div class="footer-zone">exclusive teaser</div>
@@ -203,16 +207,12 @@
         // Инициализируем Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.ready();
-        tg.expand(); // Расширяем приложение на весь экран телефона
+        tg.expand();
 
-        // Попытка принудительно стартануть видео со звуком внутри ТГ
         const video = document.getElementById('bgVideo');
         
-        // В ТГ звук запускается без проблем, но на всякий случай страхуемся встроенным методом
         document.addEventListener("DOMContentLoaded", () => {
             video.play().catch(error => {
-                // Если вдруг политика безопасности конкретной версии ТГ заблокирует,
-                // запускаем без звука, но включаем по первому тапу по экрану
                 video.muted = true;
                 video.play();
                 document.body.addEventListener('click', () => {
@@ -221,8 +221,9 @@
             });
         });
 
-        // ЛОГИКА ТАЙМЕРА (12 Июня 00:00 МСК)
-        const targetDate = new Date("2026-06-12T00:00:00+03:00").getTime();
+        // УНИВЕРСАЛЬНЫЙ ОНЛАЙН-РАСЧЕТ ВРЕМЕНИ (12 Июня 2026, 00:00 МСК)
+        // Месяцы в JS идут с 0, поэтому 5 — это Июнь. Вычитаем 3 часа, чтобы зафиксировать МСК (UTC+3)
+        const targetDate = Date.UTC(2026, 5, 12, 0, 0, 0) - (3 * 60 * 60 * 1000);
 
         const timerElement = document.getElementById("timer");
         const releaseText = document.getElementById("release-text");
